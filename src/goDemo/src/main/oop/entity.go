@@ -2,10 +2,11 @@ package method
 
 import "fmt"
 
-type person struct{
-	Name string
-	age int
-	sex int
+type Student struct {
+	Name  string
+	age   int
+	sex   int
+	Score int
 }
 
 //封装（encapsulation）就是把抽象出的字段和对字段的操作封装在一起，数据被保护在内部，程序的其它包只有通过被授权的操作或方法，
@@ -30,7 +31,7 @@ type person struct{
 //Golang 本身对面向对象的特性是做了简化的。
 
 // NewStudent 工厂模式的函数，类似于构造器
-func NewStudent(name string, age int, sex int) *person {
+func NewStudent(name string, age int, sex int) *Student {
 
 	if age > 100 || age < 0 {
 		fmt.Println("年龄不合法")
@@ -41,14 +42,34 @@ func NewStudent(name string, age int, sex int) *person {
 		return nil
 	}
 
-	return &person{
+	return &Student{
 		Name: name,
-		age: age,
-		sex: sex,
+		age:  age,
+		sex:  sex,
 	}
 }
 
 // GetSex 如果 sex 字段首字母小写，则在其它包不可以直接方法，可以提供一个方法
-func (s *person) GetSex() int {
-	return s.sex
+func (stu *Student) GetSex() int {
+	return stu.sex
+}
+
+func (stu *Student) ShowInfo() {
+	fmt.Printf("学生名=%v 年龄=%v 成绩=%v\n", stu.Name, stu.age, stu.Score)
+}
+
+func (stu *Student) SetAge(age int) {
+	stu.age = age
+}
+
+func (stu *Student) SetScore(score int) {
+	stu.Score = score
+}
+
+func (stu *Student) GetSum(n1 int, n2 int) int {
+	return n1 + n2
+}
+
+func (stu *Student) testPrivateMethod() {
+	fmt.Println("方法名小写的方法")
 }
