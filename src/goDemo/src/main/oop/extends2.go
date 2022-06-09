@@ -1,4 +1,4 @@
-package method
+package oop
 
 import "fmt"
 
@@ -8,8 +8,10 @@ type Xiaohua struct {
 }
 
 type Xiaoqing struct {
-	s Student //嵌入了Student匿名结构体
-	p Pupil
+	s     Student //嵌入了Student匿名结构体
+	p     Pupil
+	int   //嵌入匿名基本数据类型
+	score int
 }
 
 type Xiaoai struct {
@@ -41,7 +43,11 @@ func test() {
 
 	//如果一个 struct 嵌套了一个有名结构体，则这种模式就是组合，那么在访问组合的结构体的字段或方法时，必须带上结构体的名字，否则编译报错
 	var xiaoqing Xiaoqing
-	xiaoqing.s.Name = "xiaoqing"
+	xiaoqing.s.Name = "xiaoqing-s"
+	xiaoqing.p.Name = "xiaoqing-p"
+	//使用匿名基本数据类型
+	xiaoqing.int = 10
+	xiaoqing.score = 90
 
 	var xiaoai = Xiaoai{
 		&Student{
