@@ -1,4 +1,4 @@
-package funct
+package dataAlgo
 
 import "fmt"
 
@@ -8,13 +8,13 @@ func BubbleSort(arr *[5]int) {
 
 	//临时变量(用于做交换)
 	temp := 0
-	for i :=0; i < len(*arr) - 1; i++ {
-		for j := 0; j < len(*arr) - 1 - i; j++ {
-			if (*arr)[j] > (*arr)[j + 1] {
+	for i := 0; i < len(*arr)-1; i++ {
+		for j := 0; j < len(*arr)-1-i; j++ {
+			if (*arr)[j] > (*arr)[j+1] {
 				//交换
 				temp = (*arr)[j]
-				(*arr)[j] = (*arr)[j + 1]
-				(*arr)[j + 1] = temp
+				(*arr)[j] = (*arr)[j+1]
+				(*arr)[j+1] = temp
 			}
 		}
 	}
@@ -23,13 +23,13 @@ func BubbleSort(arr *[5]int) {
 
 func sortTest() {
 	//冒泡排序
-	arr := [5]int{24,69,80,57,13}
+	arr := [5]int{24, 69, 80, 57, 13}
 	BubbleSort(&arr)
 	fmt.Println("main arr=", arr)
 }
 
 // 顺序查找
-func sortFind()  {
+func sortFind() {
 	//有一个数列：白眉鹰王、金毛狮王、紫衫龙王、青翼蝠王
 	//猜数游戏：从键盘中任意输入一个名称，判断数列中是否包含此名称【顺序查找】
 	names := [4]string{"白眉鹰王", "金毛狮王", "紫衫龙王", "青翼蝠王"}
@@ -88,10 +88,10 @@ func BinaryFind(arr *[6]int, leftIndex int, rightIndex int, findVal int) {
 
 	if (*arr)[middle] > findVal {
 		//说明我们要查找的数，应该在 leftIndex --- middel-1
-		BinaryFind(arr, leftIndex, middle - 1, findVal)
+		BinaryFind(arr, leftIndex, middle-1, findVal)
 	} else if (*arr)[middle] < findVal {
 		//说明我们要查找的数，应该在 middel+1 --- rightIndex
-		BinaryFind(arr, middle + 1, rightIndex, findVal)
+		BinaryFind(arr, middle+1, rightIndex, findVal)
 	} else {
 		//找到了
 		fmt.Printf("找到了，下标为%v \n", middle)
@@ -99,6 +99,6 @@ func BinaryFind(arr *[6]int, leftIndex int, rightIndex int, findVal int) {
 }
 
 func sort2Test() {
-	arr := [6]int{1,8, 10, 89, 1000, 1234}
-	BinaryFind(&arr, 0, len(arr) - 1, -6)
+	arr := [6]int{1, 8, 10, 89, 1000, 1234}
+	BinaryFind(&arr, 0, len(arr)-1, -6)
 }
