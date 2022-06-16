@@ -17,10 +17,13 @@ testing 框架和其他语言中的测试框架类似，可以基于这个框架
 
 - PASS 表示测试用例运行成功，FAIL 表示测试用例运行失败。
 
-//测试单个文件，一定要带上被测试的原文件
+//测试单个文件，一定要带上被测试的原文件，不指定则默认是执行所有的测试文件
 go test -v  cal_test.go  cal.go
 //测试单个方法
 go test -v -test.run TestDate
+
+//获取 test 指令帮助信息
+go help test
 */
 
 func TestPublic(t *testing.T) {
