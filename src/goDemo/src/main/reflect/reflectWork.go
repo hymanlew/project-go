@@ -90,11 +90,35 @@ func TestStruct(a interface{}) {
 	fmt.Println("res=", res[0].Int()) //返回结果, 返回的结果是 []reflect.Value
 }
 
-func demo2() {
+func changeFieldValue(a interface{}) {
+	value := reflect.ValueOf(a)
+	kd := value.Kind()
+	if kd != reflect.Ptr && value.Elem().Kind() != reflect.Struct {
+		fmt.Println("入参不是指针类型")
+		return
+	}
+	if value.Elem().Kind() != reflect.Struct {
+		fmt.Println("值不是结构本")
+		return
+	}
+
+	field := value.Elem().FieldByName("Name")
+	if field == reflect.ValueOf(nil) {
+		fmt.Println("未找到该字段")
+		return
+	}
+
+	field.SetString("aaa")
+}
+
+func Demo2() {
 	var monster Monster = Monster{
 		Name:  "黄鼠狼精",
 		Age:   400,
 		Score: 30.8,
 	}
 	TestStruct(monster)
+
+	changeFieldValue(&monster)
+	fmt.Println(monster)
 }
