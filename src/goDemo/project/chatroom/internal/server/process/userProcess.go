@@ -1,24 +1,25 @@
-package process2
+package serverProcess
 
 import (
 	"encoding/json"
 	"fmt"
-	"go_code/chatroom/common/message"
-	"go_code/chatroom/server/model"
-	"go_code/chatroom/server/utils"
+	"goDemo/project/chatroom/internal/pkg/message"
+	"goDemo/project/chatroom/internal/pkg/model"
+	"goDemo/project/chatroom/internal/pkg/service"
+	"goDemo/project/chatroom/internal/pkg/utils"
 	"net"
 )
 
 type UserProcess struct {
-	//字段
+	//用户保持的连接
 	Conn net.Conn
-	//增加一个字段，表示该Conn是哪个用户
+	//表示该 Conn 是哪个用户
 	UserId int
 }
 
 //这里我们编写通知所有在线的用户的方法
 //userId 要通知其它的在线用户，我上线
-func (this *UserProcess) NotifyOthersOnlineUser(userId int) {
+func (userProcess *UserProcess) NotifyOthersOnlineUser(userId int) {
 
 	//遍历 onlineUsers, 然后一个一个的发送 NotifyUserStatusMes
 	for id, up := range userMgr.onlineUsers {
@@ -31,7 +32,7 @@ func (this *UserProcess) NotifyOthersOnlineUser(userId int) {
 	}
 }
 
-func (this *UserProcess) NotifyMeOnline(userId int) {
+func (userProcess *UserProcess) NotifyMeOnline(userId int) {
 
 	//组装我们的NotifyUserStatusMes
 	var mes message.Message
@@ -59,7 +60,7 @@ func (this *UserProcess) NotifyMeOnline(userId int) {
 
 	//发送,创建我们Transfer实例，发送
 	tf := &utils.Transfer{
-		Conn: this.Conn,
+		Conn: userProcess.Conn,
 	}
 
 	err = tf.WritePkg(data)
@@ -69,7 +70,7 @@ func (this *UserProcess) NotifyMeOnline(userId int) {
 	}
 }
 
-func (this *UserProcess) ServerProcessRegister(mes *message.Message) (err error) {
+func (userProcess *UserProcess) ServerProcessRegister(mes *message.Message) (err error) {
 
 	//1.先从mes 中取出 mes.Data ，并直接反序列化成RegisterMes
 	var registerMes message.RegisterMes
@@ -86,12 +87,12 @@ func (this *UserProcess) ServerProcessRegister(mes *message.Message) (err error)
 
 	//我们需要到redis数据库去完成注册.
 	//1.使用model.MyUserDao 到redis去验证
-	err = model.MyUserDao.Register(&registerMes.User)
+	err = service.NewUserDao(utils.GetPool()).Register(&registerMes.User)
 
 	if err != nil {
-		if err == model.ERROR_USER_EXISTS {
+		if err == model.ErrorUserExists {
 			registerResMes.Code = 505
-			registerResMes.Error = model.ERROR_USER_EXISTS.Error()
+			registerResMes.Error = model.ErrorUserExists.Error()
 		} else {
 			registerResMes.Code = 506
 			registerResMes.Error = "注册发生未知错误..."
@@ -118,54 +119,50 @@ func (this *UserProcess) ServerProcessRegister(mes *message.Message) (err error)
 	//6. 发送data, 我们将其封装到writePkg函数
 	//因为使用分层模式(mvc), 我们先创建一个Transfer 实例，然后读取
 	tf := &utils.Transfer{
-		Conn: this.Conn,
+		Conn: userProcess.Conn,
 	}
 	err = tf.WritePkg(data)
 	return
 
 }
 
-//编写一个函数serverProcessLogin函数， 专门处理登录请求
-func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
-	//核心代码...
-	//1. 先从mes 中取出 mes.Data ，并直接反序列化成LoginMes
+// ServerProcessLogin 编写函数，专门处理登录请求
+func (userProcess *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
+
+	//先从 mes 中取出 mes.Data，并直接反序列化成 LoginMes
 	var loginMes message.LoginMes
 	err = json.Unmarshal([]byte(mes.Data), &loginMes)
 	if err != nil {
 		fmt.Println("json.Unmarshal fail err=", err)
 		return
 	}
-	//1先声明一个 resMes
-	var resMes message.Message
-	resMes.Type = message.LoginResMesType
-	//2在声明一个 LoginResMes，并完成赋值
+
+	//声明一个 LoginResMes，并完成赋值
 	var loginResMes message.LoginResMes
 
-	//我们需要到redis数据库去完成验证.
-	//1.使用model.MyUserDao 到redis去验证
-	user, err := model.MyUserDao.Login(loginMes.UserId, loginMes.UserPwd)
-
+	//并到 redis 数据库去完成验证
+	userDao := service.NewUserDao(utils.GetPool())
+	user, err := userDao.Login(loginMes.UserId, loginMes.UserPwd)
 	if err != nil {
-
-		if err == model.ERROR_USER_NOTEXISTS {
+		if err == model.ErrorUserNotexists {
 			loginResMes.Code = 500
 			loginResMes.Error = err.Error()
-		} else if err == model.ERROR_USER_PWD {
+		} else if err == model.ErrorUserPwd {
 			loginResMes.Code = 403
 			loginResMes.Error = err.Error()
 		} else {
 			loginResMes.Code = 505
 			loginResMes.Error = "服务器内部错误..."
 		}
-
 	} else {
+
+		//用户登录成功，就放入到 userMgr 中
 		loginResMes.Code = 200
-		//这里，因为用户登录成功，我们就把该登录成功的用放入到userMgr中
-		//将登录成功的用户的userId 赋给 this
-		this.UserId = loginMes.UserId
-		userMgr.AddOnlineUser(this)
+		userProcess.UserId = loginMes.UserId
+		userMgr.AddOnlineUser(userProcess)
+
 		//通知其它的在线用户， 我上线了
-		this.NotifyOthersOnlineUser(loginMes.UserId)
+		userProcess.NotifyOthersOnlineUser(loginMes.UserId)
 		//将当前在线用户的id 放入到loginResMes.UsersId
 		//遍历 userMgr.onlineUsers
 		for id, _ := range userMgr.onlineUsers {
@@ -173,8 +170,8 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 		}
 		fmt.Println(user, "登录成功")
 	}
-	// //如果用户id= 100， 密码=123456, 认为合法，否则不合法
 
+	// //如果用户id= 100， 密码=123456, 认为合法，否则不合法
 	// if loginMes.UserId == 100 && loginMes.UserPwd == "123456" {
 	// 	//合法
 	// 	loginResMes.Code = 200
@@ -192,7 +189,9 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 		return
 	}
 
-	//4. 将data 赋值给 resMes
+	//声明一个 resMes, 并将 data 赋值给 resMes
+	var resMes message.Message
+	resMes.Type = message.LoginResMesType
 	resMes.Data = string(data)
 
 	//5. 对resMes 进行序列化，准备发送
@@ -204,7 +203,7 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 	//6. 发送data, 我们将其封装到writePkg函数
 	//因为使用分层模式(mvc), 我们先创建一个Transfer 实例，然后读取
 	tf := &utils.Transfer{
-		Conn: this.Conn,
+		Conn: userProcess.Conn,
 	}
 	err = tf.WritePkg(data)
 	return

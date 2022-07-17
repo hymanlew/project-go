@@ -1,4 +1,4 @@
-package process
+package clientProcess
 
 import (
 	"encoding/json"

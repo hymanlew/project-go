@@ -1,12 +1,10 @@
-package process2
+package serverProcess
 
 import (
 	"fmt"
 )
 
-//因为UserMgr 实例在服务器端有且只有一个
-//因为在很多的地方，都会使用到，因此，我们
-//将其定义为全局变量
+//因为 UserMgr 实例在服务器端有且只有一个，且在很多的地方都会使用到，因此将其定义为全局变量
 var (
 	userMgr *UserMgr
 )
@@ -22,26 +20,26 @@ func init() {
 	}
 }
 
-//完成对onlineUsers添加
-func (this *UserMgr) AddOnlineUser(up *UserProcess) {
-	this.onlineUsers[up.UserId] = up
+// AddOnlineUser 完成对 onlineUsers 添加
+func (usrMgr *UserMgr) AddOnlineUser(up *UserProcess) {
+	usrMgr.onlineUsers[up.UserId] = up
 }
 
 //删除
-func (this *UserMgr) DelOnlineUser(userId int) {
-	delete(this.onlineUsers, userId)
+func (usrMgr *UserMgr) DelOnlineUser(userId int) {
+	delete(usrMgr.onlineUsers, userId)
 }
 
 //返回当前所有在线的用户
-func (this *UserMgr) GetAllOnlineUser() map[int]*UserProcess {
-	return this.onlineUsers
+func (usrMgr *UserMgr) GetAllOnlineUser() map[int]*UserProcess {
+	return usrMgr.onlineUsers
 }
 
 //根据id返回对应的值
-func (this *UserMgr) GetOnlineUserById(userId int) (up *UserProcess, err error) {
+func (usrMgr *UserMgr) GetOnlineUserById(userId int) (up *UserProcess, err error) {
 
 	//如何从map取出一个值，带检测方式
-	up, ok := this.onlineUsers[userId]
+	up, ok := usrMgr.onlineUsers[userId]
 	if !ok { //说明，你要查找的这个用户，当前不在线。
 		err = fmt.Errorf("用户%d 不存在", userId)
 		return

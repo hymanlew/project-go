@@ -1,19 +1,16 @@
-package main
+package client
 
 import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"goDemo/project/chatroom/internal/pkg/message"
+	"goDemo/project/chatroom/internal/pkg/utils"
 	"net"
 )
 
 func login(userId int, userPwd string) (err error) {
-
-	//下一个就要开始定协议..
-	// fmt.Printf(" userId = %d userPwd=%s\n", userId, userPwd)
-
-	// return nil
+	fmt.Printf(" userId = %d userPwd=%s\n", userId, userPwd)
 
 	//1. 链接到服务器
 	conn, err := net.Dial("tcp", "localhost:8889")
@@ -21,12 +18,12 @@ func login(userId int, userPwd string) (err error) {
 		fmt.Println("net.Dial err=", err)
 		return
 	}
-	//延时关闭
 	defer conn.Close()
 
-	//2. 准备通过conn发送消息给服务
+	//2. 准备通过 conn 发送消息给服务
 	var mes message.Message
 	mes.Type = message.LoginMesType
+
 	//3. 创建一个LoginMes 结构体
 	var loginMes message.LoginMes
 	loginMes.UserId = userId
@@ -75,8 +72,10 @@ func login(userId int, userPwd string) (err error) {
 	// time.Sleep(20 * time.Second)
 	// fmt.Println("休眠了20..")
 	// 这里还需要处理服务器端返回的消息.
-	mes, err = readPkg(conn) // mes 就是
-
+	tf := &utils.Transfer{
+		Conn: conn,
+	}
+	mes, err = tf.ReadPkg() // mes 就是
 	if err != nil {
 		fmt.Println("readPkg(conn) err=", err)
 		return

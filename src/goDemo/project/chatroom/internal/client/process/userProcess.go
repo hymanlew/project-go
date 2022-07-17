@@ -1,11 +1,12 @@
-package process
+package clientProcess
 
 import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"go_code/chatroom/client/utils"
-	"go_code/chatroom/common/message"
+	"goDemo/project/chatroom/internal/pkg/message"
+	"goDemo/project/chatroom/internal/pkg/model"
+	"goDemo/project/chatroom/internal/pkg/utils"
 	"net"
 	"os"
 )
@@ -183,7 +184,7 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 
 			fmt.Println("用户id:\t", v)
 			//完成 客户端的 onlineUsers 完成初始化
-			user := &message.User{
+			user := &model.User{
 				UserId:     v,
 				UserStatus: message.UserOnline,
 			}

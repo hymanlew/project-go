@@ -1,10 +1,10 @@
-package process
+package clientProcess
 
 import (
 	"encoding/json"
 	"fmt"
-	"go_code/chatroom/client/utils"
-	"go_code/chatroom/common/message"
+	"goDemo/project/chatroom/internal/pkg/message"
+	"goDemo/project/chatroom/internal/pkg/utils"
 	"net"
 	"os"
 )

@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-//定义两个变量，一个表示用户id, 一个表示用户密码
+//定义变量，表示用户id, 用户密码, 用户名称
 var userId int
 var userPwd string
 var userName string
@@ -31,18 +31,28 @@ func main() {
 		case 1:
 			fmt.Println("登陆聊天室")
 			fmt.Println("请输入用户的id")
-			fmt.Scanf("%d\n", &userId)
+			_, err := fmt.Scanf("%d\n", &userId)
+			if err != nil {
+				fmt.Printf("输入有误，err = %v", err)
+				continue
+			}
+
 			fmt.Println("请输入用户的密码")
-			fmt.Scanf("%s\n", &userPwd)
-			// 完成登录
-			//1. 创建一个UserProcess的实例
-			up := &process.UserProcess{}
-			up.Login(userId, userPwd)
-			// if err != nil {
-			// 	fmt.Println("登录失败")
-			// } else {
-			// 	fmt.Println("登录成功")
-			// }
+			_, err = fmt.Scanf("%s\n", &userPwd)
+			if err != nil {
+				fmt.Printf("输入有误，err = %v", err)
+				continue
+			}
+
+			//完成登录, 创建一个 UserProcess 的实例
+			up := &clientProcess.UserProcess{}
+			err = up.Login(userId, userPwd)
+			if err != nil {
+				fmt.Println("登录失败")
+				continue
+			} else {
+				fmt.Println("登录成功")
+			}
 			loop = false
 		case 2:
 			fmt.Println("注册用户")
@@ -52,9 +62,16 @@ func main() {
 			fmt.Scanf("%s\n", &userPwd)
 			fmt.Println("请输入用户名字(nickname):")
 			fmt.Scanf("%s\n", &userName)
-			//2. 调用UserProcess，完成注册的请求、
-			up := &process.UserProcess{}
-			up.Register(userId, userPwd, userName)
+
+			//调用 UserProcess，完成注册的请求
+			up := &clientProcess.UserProcess{}
+			err := up.Register(userId, userPwd, userName)
+			if err != nil {
+				fmt.Println("注册失败")
+				continue
+			} else {
+				fmt.Println("注册成功")
+			}
 			loop = false
 		case 3:
 			fmt.Println("退出系统")

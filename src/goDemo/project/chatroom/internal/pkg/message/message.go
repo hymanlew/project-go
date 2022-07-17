@@ -1,5 +1,7 @@
 package message
 
+import "goDemo/project/chatroom/internal/pkg/model"
+
 const (
 	LoginMesType            = "LoginMes"
 	LoginResMesType         = "LoginResMes"
@@ -17,8 +19,8 @@ const (
 )
 
 type Message struct {
-	Type string `json:"type"` //消息类型
-	Data string `json:"data"` //消息的类型
+	Type string `json:"type"` //消息的类型
+	Data string `json:"data"` //数据的类型
 }
 
 //定义两个消息..后面需要再增加
@@ -36,23 +38,23 @@ type LoginResMes struct {
 }
 
 type RegisterMes struct {
-	User User `json:"user"` //类型就是User结构体.
+	User model.User `json:"user"` //类型就是User结构体.
 }
 type RegisterResMes struct {
 	Code  int    `json:"code"`  // 返回状态码 400 表示该用户已经占有 200表示注册成功
 	Error string `json:"error"` // 返回错误信息
 }
 
-//为了配合服务器端推送用户状态变化的消息
+// NotifyUserStatusMes 为了配合服务器端推送用户状态变化的消息
 type NotifyUserStatusMes struct {
 	UserId int `json:"userId"` //用户id
 	Status int `json:"status"` //用户的状态
 }
 
-//增加一个SmsMes //发送的消息
+// SmsMes 增加一个 SmsMes 发送的消息
 type SmsMes struct {
-	Content string `json:"content"` //内容
-	User           //匿名结构体，继承
+	Content    string `json:"content"` //内容
+	model.User        //匿名结构体，继承
 }
 
 // SmsReMes
