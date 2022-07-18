@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-//显示登录成功后的界面..
+// ShowMenu 显示登录成功后的界面..
 func ShowMenu() {
 
 	fmt.Println("-------恭喜xxx登录成功---------")
@@ -56,9 +56,9 @@ func serverProcessMes(conn net.Conn) {
 			fmt.Println("tf.ReadPkg err=", err)
 			return
 		}
+
 		//如果读取到消息，又是下一步处理逻辑
 		switch mes.Type {
-
 		case message.NotifyUserStatusMesType: // 有人上线了
 
 			//1. 取出.NotifyUserStatusMes

@@ -3,15 +3,15 @@ package clientProcess
 import (
 	"encoding/json"
 	"fmt"
-	"go_code/chatroom/client/utils"
-	"go_code/chatroom/common/message"
+	"goDemo/project/chatroom/internal/pkg/message"
+	"goDemo/project/chatroom/internal/pkg/utils"
 )
 
 type SmsProcess struct {
 }
 
-//发送群聊的消息
-func (this *SmsProcess) SendGroupMes(content string) (err error) {
+// SendGroupMes 发送群聊的消息
+func (sms *SmsProcess) SendGroupMes(content string) (err error) {
 
 	//1 创建一个Mes
 	var mes message.Message
@@ -43,12 +43,10 @@ func (this *SmsProcess) SendGroupMes(content string) (err error) {
 	tf := &utils.Transfer{
 		Conn: CurUser.Conn,
 	}
-	//6.发送
 	err = tf.WritePkg(data)
 	if err != nil {
 		fmt.Println("SendGroupMes err=", err.Error())
 		return
 	}
-
 	return
 }

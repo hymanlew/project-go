@@ -25,17 +25,17 @@ func (usrMgr *UserMgr) AddOnlineUser(up *UserProcess) {
 	usrMgr.onlineUsers[up.UserId] = up
 }
 
-//删除
+// DelOnlineUser 删除
 func (usrMgr *UserMgr) DelOnlineUser(userId int) {
 	delete(usrMgr.onlineUsers, userId)
 }
 
-//返回当前所有在线的用户
+// GetAllOnlineUser 返回当前所有在线的用户
 func (usrMgr *UserMgr) GetAllOnlineUser() map[int]*UserProcess {
 	return usrMgr.onlineUsers
 }
 
-//根据id返回对应的值
+// GetOnlineUserById 根据id返回对应的值
 func (usrMgr *UserMgr) GetOnlineUserById(userId int) (up *UserProcess, err error) {
 
 	//如何从map取出一个值，带检测方式

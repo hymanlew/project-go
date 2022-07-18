@@ -3,12 +3,11 @@ package clientProcess
 import (
 	"encoding/json"
 	"fmt"
-	"go_code/chatroom/common/message"
+	"goDemo/project/chatroom/internal/pkg/message"
 )
 
-func outputGroupMes(mes *message.Message) { //这个地方mes一定SmsMes
-	//显示即可
-	//1. 反序列化mes.Data
+func outputGroupMes(mes *message.Message) {
+	//显示即可，反序列化 mes.Data
 	var smsMes message.SmsMes
 	err := json.Unmarshal([]byte(mes.Data), &smsMes)
 	if err != nil {
@@ -17,8 +16,7 @@ func outputGroupMes(mes *message.Message) { //这个地方mes一定SmsMes
 	}
 
 	//显示信息
-	info := fmt.Sprintf("用户id:\t%d 对大家说:\t%s",
-		smsMes.UserId, smsMes.Content)
+	info := fmt.Sprintf("用户id:\t%d 对大家说:\t%s", smsMes.UserId, smsMes.Content)
 	fmt.Println(info)
 	fmt.Println()
 
