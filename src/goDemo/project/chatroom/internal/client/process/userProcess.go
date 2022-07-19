@@ -108,7 +108,7 @@ func (usrProcess *UserProcess) Login(userId int, userPwd string) (err error) {
 	}
 
 	//自定义通讯协议，发送数据包
-	//先获取到 data 的长度 -> 转成一个表示长度的 byte 切片
+	//先获取到 data 的长度 -> 转成一个表示长度的 byte 切片，使用 4 个字节
 	var pkgLen uint32
 	pkgLen = uint32(len(data))
 	var buf [4]byte

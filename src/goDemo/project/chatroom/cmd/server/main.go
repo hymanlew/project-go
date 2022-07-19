@@ -28,6 +28,7 @@ func main() {
 		conn, err := listen.Accept()
 		if err != nil {
 			fmt.Println("listen.Accept err=", err)
+			continue
 		}
 
 		//一旦链接成功，则启动一个协程和客户端保持通讯

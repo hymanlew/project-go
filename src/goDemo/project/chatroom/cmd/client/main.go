@@ -30,13 +30,14 @@ func main() {
 		switch key {
 		case 1:
 			fmt.Println("登陆聊天室")
+
+			//必须要加 \n 即捕捉到回车的输入
 			fmt.Println("请输入用户的id")
 			_, err := fmt.Scanf("%d\n", &userId)
 			if err != nil {
 				fmt.Printf("输入有误，err = %v", err)
 				continue
 			}
-
 			fmt.Println("请输入用户的密码")
 			_, err = fmt.Scanf("%s\n", &userPwd)
 			if err != nil {

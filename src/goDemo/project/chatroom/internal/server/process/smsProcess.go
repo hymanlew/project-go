@@ -38,6 +38,7 @@ func (sms *SmsProcess) SendGroupMes(mes *message.Message) {
 		sms.SendMesToEachOnlineUser(data, up.Conn)
 	}
 }
+
 func (sms *SmsProcess) SendMesToEachOnlineUser(data []byte, conn net.Conn) {
 
 	//创建一个Transfer 实例，发送data

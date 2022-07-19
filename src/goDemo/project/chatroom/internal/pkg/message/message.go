@@ -13,17 +13,15 @@ const (
 
 //这里我们定义几个用户状态的常量
 const (
-	UserOnline = iota
-	UserOffline
-	UserBusyStatus
+	UserOnline     = iota
+	UserOffline    = 1
+	UserBusyStatus = 2
 )
 
 type Message struct {
 	Type string `json:"type"` //消息的类型
 	Data string `json:"data"` //数据的类型
 }
-
-//定义两个消息..后面需要再增加
 
 type LoginMes struct {
 	UserId   int    `json:"userId"`   //用户id
@@ -40,6 +38,7 @@ type LoginResMes struct {
 type RegisterMes struct {
 	User model.User `json:"user"` //类型就是User结构体.
 }
+
 type RegisterResMes struct {
 	Code  int    `json:"code"`  // 返回状态码 400 表示该用户已经占有 200表示注册成功
 	Error string `json:"error"` // 返回错误信息
@@ -56,5 +55,3 @@ type SmsMes struct {
 	Content    string `json:"content"` //内容
 	model.User        //匿名结构体，继承
 }
-
-// SmsReMes

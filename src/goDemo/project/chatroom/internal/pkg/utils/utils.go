@@ -21,7 +21,7 @@ func (transfer *Transfer) ReadPkg() (mes message.Message, err error) {
 
 	fmt.Println("读取客户端发送的数据...")
 
-	//conn.Read 在 conn 没有被关闭的情况下，才会阻塞。如果客户端关闭了 conn 则，就不会阻塞
+	//conn.Read 在 conn 没有被关闭的情况下，才会阻塞。如果客户端关闭了 conn，则就不会阻塞
 	_, err = transfer.Conn.Read(transfer.Buf[:4])
 	if err != nil {
 		//err = errors.New("read pkg header error")
@@ -37,7 +37,7 @@ func (transfer *Transfer) ReadPkg() (mes message.Message, err error) {
 	n, err := transfer.Conn.Read(transfer.Buf[:pkgLen])
 	if n != int(pkgLen) || err != nil {
 		err = errors.New("read pkg body error")
-		return mes, err
+		return
 	}
 
 	//把 pkgLen 反序列化成 -> message.Message
