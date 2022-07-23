@@ -112,7 +112,6 @@ func (userProcess *UserProcess) ServerProcessRegister(mes *message.Message) (err
 	}
 
 	//发送 data, 我们将其封装到 writePkg 函数
-	//因为使用分层模式(mvc), 我们先创建一个Transfer 实例，然后读取
 	tf := &utils.Transfer{
 		Conn: userProcess.Conn,
 	}
@@ -185,7 +184,6 @@ func (userProcess *UserProcess) ServerProcessLogin(mes *message.Message) (err er
 		return
 	}
 	//发送 data, 我们将其封装到 writePkg 函数
-	//因为使用分层模式(mvc), 我们先创建一个Transfer 实例，然后读取
 	tf := &utils.Transfer{
 		Conn: userProcess.Conn,
 	}
