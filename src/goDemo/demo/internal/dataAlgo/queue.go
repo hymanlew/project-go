@@ -15,15 +15,6 @@ import (
 //即数组第一个元素为队首，最后一个为队尾。可以实现插入读取的操作。
 //但这有一个问题，当操作到最后一个元素时，队首队尾都这个元素，无法读取也无法插入。且之前的坐标也无法复用了。
 
-//2，使用环形数组来实现此结构:
-//将数组看作是一个环形的，并通过取模的方法来实现。初始化为 first = last = 0。数组大小 size-1 即为最大容量。
-//队尾坐标的下一个坐标为队首时表示队列满了，即将队列容量空出一个作为约定。
-//即 (last + 1) % max = first 为队满。而 last == first 为队空。
-
-//3，使用链表实现队列，链表本身就是有序的列表。
-//单链表有一个头结点，里面还指向了后面一个结点的指针。头结点的作用主要是用于标识链表头，本身此结点不存放任何数据。
-//而其他的每个结点都有一个指针指向后面一个节点。
-
 // Queue 注意项：初始值 first = last = -1，first 当前坐标 +1 才是此坐标的数据，last 坐标指向的就是当前的数据。
 type Queue struct {
 	maxSize int
@@ -105,6 +96,11 @@ func queue1() {
 		}
 	}
 }
+
+//2，使用环形数组来实现此结构:
+//将数组看作是一个环形的，并通过取模的方法来实现。初始化为 first = last = 0。数组大小 size-1 即为最大容量。
+//队尾坐标的下一个坐标为队首时表示队列满了，即将队列容量空出一个作为约定。
+//即 (last + 1) % max = first 为队满。而 last == first 为队空。
 
 type CircleQueue struct {
 	maxSize int    // 4
@@ -205,4 +201,323 @@ func queue2() {
 			os.Exit(0)
 		}
 	}
+}
+
+//3，使用链表实现队列，链表本身就是有序的列表。
+//单链表有一个头结点，里面还指向了后面一个结点的指针。头结点的作用主要是用于标识链表头，本身此结点不存放任何数据。
+//而其他的每个结点都有一个指针指向后面一个节点。
+
+type HeroNode struct {
+	num      int
+	name     string
+	nickname string
+	next     *HeroNode //指向下一个结点
+}
+
+func InsertHeroNode(head *HeroNode, newHeroNode *HeroNode) {
+	//1. 先找到该链表的最后一个结点
+	//2. 创建一个辅助结点[跑龙套, 帮忙]
+	temp := head
+	for {
+		//表示找到最后
+		if temp.next == nil {
+			break
+		}
+		//让temp不断的指向下一个结点
+		temp = temp.next
+	}
+
+	//3. 将 newHeroNode 加入到链表的最后
+	temp.next = newHeroNode
+}
+
+// InsertHeroNode2 插入节点的第二种方法，根据 num 的编号从小到大插入
+func InsertHeroNode2(head *HeroNode, newHeroNode *HeroNode) {
+	//1. 找到适当的结点
+	//2. 创建一个辅助结点
+	temp := head
+	flag := true
+
+	//让插入结点的 num 和 temp 下一结点的 num 比较
+	for {
+		if temp.next == nil {
+			break
+		} else if temp.next.num >= newHeroNode.num {
+			//说明 newHeroNode 就应该插入到 temp 后面，即插入到 temp next 的前面
+			break
+		} else if temp.next.num == newHeroNode.num {
+			//说明链表中已经有这个 num, 就不能插入
+			flag = false
+			break
+		}
+		temp = temp.next
+	}
+
+	if !flag {
+		fmt.Println("对不起，节点已经存在 num =", newHeroNode.num)
+		return
+	} else {
+		newHeroNode.next = temp.next
+		temp.next = newHeroNode
+	}
+}
+
+func DelHerNode(head *HeroNode, id int) {
+	temp := head
+	flag := false
+
+	//找到要删除结点的 num，和 temp 下一个结点的 num 比较
+	for {
+		if temp.next == nil {
+			break
+		} else if temp.next.num == id {
+			flag = true
+			break
+		}
+		temp = temp.next
+	}
+
+	//说明已经找到, 需要删除
+	if flag {
+		temp.next = temp.next.next
+	} else {
+		fmt.Println("sorry, 要删除的id不存在")
+	}
+}
+
+func ListHeroNode(head *HeroNode) {
+	//创建一个辅助结点
+	temp := head
+
+	//先判断该链表是不是一个空的链表
+	if temp.next == nil {
+		fmt.Println("空空如也。。。。")
+		return
+	}
+
+	//遍历这个链表
+	for {
+		fmt.Printf("[%d , %s , %s]==>", temp.next.num, temp.next.name, temp.next.nickname)
+		temp = temp.next
+
+		//判断是否链表后
+		if temp.next == nil {
+			break
+		}
+	}
+}
+
+func queue3() {
+	//1. 先创建一个头结点,
+	head := &HeroNode{}
+
+	//2. 创建一个新的 HeroNode
+	hero1 := &HeroNode{
+		num:      1,
+		name:     "宋江",
+		nickname: "及时雨",
+	}
+
+	hero2 := &HeroNode{
+		num:      2,
+		name:     "卢俊义",
+		nickname: "玉麒麟",
+	}
+
+	hero3 := &HeroNode{
+		num:      3,
+		name:     "林冲",
+		nickname: "豹子头",
+	}
+
+	// hero4 := &HeroNode{
+	// 	num : 3,
+	// 	name : "吴用",
+	// 	nickname : "智多星",
+	// }
+
+	//3. 加入
+	InsertHeroNode2(head, hero3)
+	InsertHeroNode2(head, hero1)
+	InsertHeroNode2(head, hero2)
+
+	//4. 显示
+	ListHeroNode(head)
+
+	//5 删除
+	fmt.Println()
+	DelHerNode(head, 1)
+	DelHerNode(head, 3)
+	ListHeroNode(head)
+}
+
+//4，使用双向链表（带 head 头的）实现队列。
+//单向链表的缺点有：
+//1，单向链表查找的方向只能是一个方向，而双向链表可以向前或向后查找。
+//2，单向链表不能自我删除，需要靠辅助节点（只能找到下一个节点来帮助删除）。而双向链表可以自我删除。
+
+type HeroNodeD struct {
+	num      int
+	name     string
+	nickname string
+	pre      *HeroNodeD //指向前一个结点
+	next     *HeroNodeD //指向下一个结点
+}
+
+func InsertHeroNodeD(head *HeroNodeD, newHeroNode *HeroNodeD) {
+	//1. 先找到该链表的最后这个结点
+	//2. 创建一个辅助结点
+	temp := head
+	for {
+		if temp.next == nil {
+			break
+		}
+		temp = temp.next
+	}
+
+	//3. 将 newHeroNode 加入到链表的最后
+	temp.next = newHeroNode
+	newHeroNode.pre = temp
+}
+
+func InsertHeroNodeD2(head *HeroNodeD, newHeroNode *HeroNodeD) {
+	//1. 找到适当的结点
+	//2. 创建一个辅助结点
+	temp := head
+	flag := true
+
+	//让插入的结点的 no，和 temp 下一个结点的 no 比较
+	for {
+		if temp.next == nil { //说明到链表的最后
+			break
+		} else if temp.next.num >= newHeroNode.num {
+			//说明 newHeroNode 就应该插入到 temp 后面
+			break
+		} else if temp.next.num == newHeroNode.num {
+			//说明链表中已经有这个no, 就不能插入
+			flag = false
+			break
+		}
+		temp = temp.next
+	}
+
+	if !flag {
+		fmt.Println("对不起，已经存在no=", newHeroNode.num)
+		return
+	} else {
+		newHeroNode.next = temp.next //ok
+		newHeroNode.pre = temp       //ok
+		if temp.next != nil {
+			temp.next.pre = newHeroNode //ok
+		}
+		temp.next = newHeroNode //ok
+	}
+}
+
+func DelHerNodeD(head *HeroNodeD, id int) {
+	temp := head
+	flag := false
+
+	//找到要删除结点的no，和temp的下一个结点的no比较
+	for {
+		if temp.next == nil {
+			break
+		} else if temp.next.num == id {
+			//说明我们找到了.
+			flag = true
+			break
+		}
+		temp = temp.next
+	}
+
+	if flag {
+		temp.next = temp.next.next //ok
+		if temp.next != nil {
+			temp.next.pre = temp
+		}
+	} else {
+		fmt.Println("sorry, 要删除的id不存在")
+	}
+}
+
+func ListHeroNodeD(head *HeroNodeD) {
+	//1. 创建一个辅助结点
+	temp := head
+
+	// 先判断该链表是不是一个空的链表
+	if temp.next == nil {
+		fmt.Println("空空如也。。。。")
+		return
+	}
+
+	//2. 遍历这个链表
+	for {
+		fmt.Printf("[%d , %s , %s]==>", temp.next.num, temp.next.name, temp.next.nickname)
+		temp = temp.next
+		if temp.next == nil {
+			break
+		}
+	}
+}
+
+func ListHeroNodeD2(head *HeroNodeD) {
+	//1. 创建一个辅助结点[跑龙套, 帮忙]
+	temp := head
+
+	//先判断该链表是不是一个空的链表
+	if temp.next == nil {
+		fmt.Println("空空如也。。。。")
+		return
+	}
+
+	//2. 让 temp 定位到双向链表的最后结点
+	for {
+		if temp.next == nil {
+			break
+		}
+		temp = temp.next
+	}
+
+	//2. 遍历这个链表
+	for {
+		fmt.Printf("[%d , %s , %s]==>", temp.num, temp.name, temp.nickname)
+
+		//判断是否链表头
+		temp = temp.pre
+		if temp.pre == nil {
+			break
+		}
+	}
+}
+
+func queue4() {
+	//1. 先创建一个头结点,
+	head := &HeroNodeD{}
+
+	//2. 创建一个新的HeroNode
+	hero1 := &HeroNodeD{
+		num:      1,
+		name:     "宋江",
+		nickname: "及时雨",
+	}
+
+	hero2 := &HeroNodeD{
+		num:      2,
+		name:     "卢俊义",
+		nickname: "玉麒麟",
+	}
+
+	hero3 := &HeroNodeD{
+		num:      3,
+		name:     "林冲",
+		nickname: "豹子头",
+	}
+
+	InsertHeroNodeD(head, hero1)
+	InsertHeroNodeD(head, hero2)
+	InsertHeroNodeD(head, hero3)
+	ListHeroNodeD(head)
+
+	fmt.Println("逆序打印")
+	ListHeroNodeD2(head)
 }
