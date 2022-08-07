@@ -2,17 +2,17 @@ package dataAlgo
 
 import (
 	"fmt"
-	"math/rand"
 	"time"
 )
 
 //排序是将一组数据，依指定的顺序进行排列的过程，常见的排序有：
 //冒泡排序：内存排序法，通过对序列从前向后（从 0 下标开始），依次比较之后相邻的元素，并进行交换进行排序。
 //选择排序：内存排序法，是从数据中按指定的规则选出某个元素（如最小的数），然后和序列中按排序的元素进行交换位置（如第一个数交换），然后如此循环交换来进行排序。
-//，插入排序，快速排序
+//插入排序：内存排序法，是对列表中的元素以插入的方式找到其适当位置，分成有序和无序两个表，然后依次从无序表中取一个元素放到有序表中进行对比，以实现排序。
+//快速排序：内存排序法，是对冒泡排序的改进，是先将数据分成两部分，一部分比另一部分小，然后分别将其进行排序，然后再分割两部分，依此循环进行直至实现有序。
 
 //BubbleSort 1，冒泡排序
-func BubbleSort(arr *[5]int) {
+func BubbleSort(arr *[15]int) {
 	fmt.Println("排序前arr=", *arr)
 
 	//临时变量(用于做交换)
@@ -31,13 +31,12 @@ func BubbleSort(arr *[5]int) {
 }
 
 //SelectSort 2，选择排序
-func SelectSort(arr *[80000]int) {
+func SelectSort(arr *[15]int) {
 
-	//标准的访问方式
-	//(*arr)[1] = 600 等价于 arr[1] = 900
-	//arr[1] = 900
-	//1. 先完成将第一个最大值和 arr[0] => 先易后难
+	//标准的数据操作方式
+	//(*arr)[1] = 600 其等价于 arr[1] = 600，两者都可以实现数据的修改
 
+	//双层循环，依次筛选出第次循环得到的最大值
 	for j := 0; j < len(arr)-1; j++ {
 
 		//假设 arr[0] 是最大值
@@ -59,60 +58,31 @@ func SelectSort(arr *[80000]int) {
 
 		//fmt.Printf("第%d次 %v\n  ", j+1 ,*arr)
 	}
-
-	/*
-		max = arr[1]
-		maxIndex = 1
-		//2. 遍历后面 2---[len(arr) -1] 比较
-		for i := 1 + 1; i < len(arr); i++ {
-			if max < arr[i] { //找到真正的最大值
-				max = arr[i]
-				maxIndex = i
-			}
-		}
-		//交换
-		if maxIndex != 1 {
-			arr[1], arr[maxIndex] = arr[maxIndex], arr[1]
-		}
-
-		fmt.Println("第2次 ", *arr)
-
-
-
-		max = arr[2]
-		maxIndex = 2
-		//2. 遍历后面 3---[len(arr) -1] 比较
-		for i := 2 + 1; i < len(arr); i++ {
-			if max < arr[i] { //找到真正的最大值
-				max = arr[i]
-				maxIndex = i
-			}
-		}
-		//交换
-		if maxIndex != 2 {
-			arr[2], arr[maxIndex] = arr[maxIndex], arr[2]
-		}
-
-		fmt.Println("第3次 ", *arr)
-
-		max = arr[3]
-		maxIndex = 3
-		//2. 遍历后面 4---[len(arr) -1] 比较
-		for i := 3 + 1; i < len(arr); i++ {
-			if max < arr[i] { //找到真正的最大值
-				max = arr[i]
-				maxIndex = i
-			}
-		}
-		//交换
-		if maxIndex != 3 {
-			arr[3], arr[maxIndex] = arr[maxIndex], arr[3]
-		}
-
-		fmt.Println("第4次 ", *arr)*/
 }
 
-//sortFind 6，顺序查找
+//InsertSort 3，插入排序
+func InsertSort(arr *[15]int) {
+
+	//第一次，给第二个元素找到合适的位置并插入
+	for i := 1; i < len(arr); i++ {
+		insertVal := arr[i]
+		insertIndex := i - 1
+
+		//从指定坐标开始比较，即从后往前，从大到小排序比较
+		for insertIndex >= 0 && arr[insertIndex] < insertVal {
+			arr[insertIndex+1] = arr[insertIndex]
+			insertIndex--
+		}
+
+		//插入，并判断只有发生数据交换后，才需要插入新数据，否则就是不需要交换，因为本身就是有序的
+		if insertIndex+1 != i {
+			arr[insertIndex+1] = insertVal
+		}
+		//fmt.Printf("第%d次插入后 %v\n",i, *arr)
+	}
+}
+
+//sortFind 4，顺序查找
 func sortFind() {
 	//有一个数列：白眉鹰王、金毛狮王、紫衫龙王、青翼蝠王
 	//猜数游戏：从键盘中任意输入一个名称，判断数列中是否包含此名称【顺序查找】
@@ -146,45 +116,75 @@ func sortFind() {
 	}
 }
 
-func sortTest() {
-	//冒泡排序
-	arr := [5]int{24, 69, 80, 57, 13}
-	BubbleSort(&arr)
-	fmt.Println("main arr=", arr)
-}
+//QuickSort 5，快速排序，二分排序
+func QuickSort(left int, right int, array *[15]int) {
 
-func main() {
-	//定义一个数组 , 从大到小
-	//arr := [6]int{10, 34, 19, 100, 80, 789}
+	//从小到大排序
+	//left 表示数组左边下标，right 表示数组右边的下标，array 表示要排序的数组
+	l := left
+	r := right
 
-	var arr [80000]int
-	for i := 0; i < 80000; i++ {
-		arr[i] = rand.Intn(900000)
+	// middle 表示中轴，支点
+	middle := array[(left+right)/2]
+	temp := 0
+
+	//for 循环将比 middle 小的数放左边，将比 middle 大的数放到右边
+	for l < r {
+
+		//从 middle 的左边找到大于等于 middle 的值
+		for array[l] < middle {
+			l++
+		}
+
+		//从 middle 的右边边找到小于等于 middle 的值
+		for array[r] > middle {
+			r--
+		}
+
+		// 1 >= r 表明本次分解任务完成, break
+		if l >= r {
+			break
+		}
+
+		//将中轴两边的大数和小数，进行交换
+		temp = array[l]
+		array[l] = array[r]
+		array[r] = temp
+
+		//优化，增加等于中轴值的数据的处理，坐标再移动一位
+		if array[l] == middle {
+			r--
+		}
+		if array[r] == middle {
+			l++
+		}
 	}
 
-	//fmt.Println(arr)
-	start := time.Now().Unix()
-	SelectSort(&arr)
-	end := time.Now().Unix()
-	fmt.Printf("选择排序耗时=%d秒", end-start)
-	fmt.Println("main函数")
-	//fmt.Println(arr)
+	// 如果  1== r, 再移动下
+	if l == r {
+		l++
+		r--
+	}
+
+	// 向左递归
+	if left < r {
+		QuickSort(left, r, array)
+	}
+	// 向右递归
+	if right > l {
+		QuickSort(l, right, array)
+	}
 }
 
-// BinaryFind 二分查找
-/*
-1. arr是一个有序数组，并且是从小到大排序
-2.  先找到中间的下标 middle = (leftIndex + rightIndex) /2, 然后让中间下标的值和 findVal 进行比较
-2.1 如果 arr[middle] > findVal,  就应该向 leftIndex ---- (middle - 1)
-2.2 如果 arr[middle] < findVal,  就应该向 middel+1---- rightIndex
-2.3 如果 arr[middle] == findVal， 就找到
-2.4 上面的 2.1、2.2、2.3 的逻辑会递归执行
-if  leftIndex > rightIndex {
-   // 找不到..
-   return ..
-}
-*/
-func BinaryFind(arr *[6]int, leftIndex int, rightIndex int, findVal int) {
+//BinaryFind 6，二分查找
+func BinaryFind(arr *[15]int, leftIndex int, rightIndex int, findVal int) {
+
+	//实现思路：
+	//1，先找到中间下标 middle = (leftIndex + rightIndex) /2, 然后让中间下标的值和 findVal 进行比较
+	//2，如果 arr[middle] > findVal, 就应该设置查询范围为 leftIndex ---- (middle - 1)
+	//3，如果 arr[middle] < findVal, 就应该设置查询范围为 middel+1---- rightIndex
+	//4，如果 arr[middle] == findVal，就代表找到了
+	//5，将上面的 2、3 步骤的逻辑递归执行，直至找到
 
 	//判断 leftIndex 是否大于 rightIndex
 	if leftIndex > rightIndex {
@@ -196,18 +196,39 @@ func BinaryFind(arr *[6]int, leftIndex int, rightIndex int, findVal int) {
 	middle := (leftIndex + rightIndex) / 2
 
 	if (*arr)[middle] > findVal {
-		//说明我们要查找的数，应该在 leftIndex --- middel-1
+		//说明要查找的数，应该在 leftIndex --- middel-1 之间
 		BinaryFind(arr, leftIndex, middle-1, findVal)
 	} else if (*arr)[middle] < findVal {
-		//说明我们要查找的数，应该在 middel+1 --- rightIndex
+		//说明要查找的数，应该在 middel+1 --- rightIndex 之间
 		BinaryFind(arr, middle+1, rightIndex, findVal)
 	} else {
-		//找到了
 		fmt.Printf("找到了，下标为%v \n", middle)
 	}
 }
 
-func sort2Test() {
-	arr := [6]int{1, 8, 10, 89, 1000, 1234}
+func sortTest() {
+	arr := [15]int{24, 69, 80, 57, 13}
+
+	//冒泡排序：是双层循环，即第个元素都要循环一次所有的数据。所以会很慢
+	BubbleSort(&arr)
+	fmt.Println("冒泡排序 arr=", arr)
+
+	//选择排序：是从左到右，是第一个元素都要与后面所有的数据比对一次才能得到结果
+	start := time.Now().Unix()
+	SelectSort(&arr)
+	end := time.Now().Unix()
+	fmt.Printf("选择排序耗时=%d秒，arr=%v", end-start, arr)
+
+	//插入排序：是从右到左，是后面的元素比对所有左边的数据，但因为左边的数据已经是排过序了，所以不是比对的所有。所以比选择排序要快
+	InsertSort(&arr)
+	fmt.Printf("插入排序耗时%d秒，arr=%v", end-start, arr)
+
+	//快速排序：是二分排序方法，即在区分大数和小数的集合时，就对两个数据进行了交换（而不是其他算法的一个个比对）。而且之后每次数据
+	//处理就是原数据的一半（一次交换两个数据），即是减少了数据比较和交换的次数，所以会很快。
+	//但其缺点是，每次数据递归处理时都是开了一个新栈，这就表示要吃一部分内存，即此算法比较占资源。
+	QuickSort(0, len(arr)-1, &arr)
+	fmt.Printf("快速排序法耗时%d秒, arr=%v", end-start, arr)
+
+	//二分查找
 	BinaryFind(&arr, 0, len(arr)-1, -6)
 }
