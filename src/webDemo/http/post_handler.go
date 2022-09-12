@@ -57,7 +57,37 @@ func postHandler(writer http.ResponseWriter, request *http.Request) {
 	writer.WriteHeader(302)
 }
 
-func test() {
+func cookieHandler(writer http.ResponseWriter, request *http.Request) {
+	//HttpOnly:
+	//控制 Cookie 的内容是否可以被 JavaScript 访问到。设置为 true 可以防止 XSS 攻击。默认 HttpOnly 为false, 表示客户端可以通过js获取。
+
+	//Path:
+	//用于设置 Cookie 的访问范围，默认为 ”/” 表示当前项目下所有都可以访问。也可以对 Path 设置路径，表示此路径及子路径内容都可以访问。
+
+	//Expires:
+	//Cookie 默认的存活时间是浏览器开启时间, 当浏览器关闭后, Cookie 才失效。目前 chrome 等主流浏览器都使用 MaxAge 设置 Cookie 的有效
+	//时间。但像 IE6,7,8 和其他浏览器不支持 MaxAge, 所以还是使用 Expires。
+	cookie := http.Cookie{
+		Name:     "cookieName",
+		Value:    "value",
+		HttpOnly: true,
+	}
+
+	//服务器返回 cookie 给客户端，之后每次同一客户端访问时，其浏览器会自动在请求头中发送 cookie 消息
+	writer.Header().Set("cookie", cookie.String())
+	writer.Header().Add("cookie", cookie.String()+"_2")
+	http.SetCookie(writer, &cookie)
+}
+
+func cookieGetHandler(writer http.ResponseWriter, request *http.Request) {
+	cookie := request.Header.Get("Cookie")
+	fmt.Printf("获取到的 cookies: %v", cookie)
+
+	cookie2, _ := request.Cookie("cookieName")
+	fmt.Printf("获取到的 cookies: %v", cookie2)
+}
+
+func HttpTest() {
 	http.HandleFunc("/post", handler)
 	http.HandleFunc("/post2", postHandler)
 	http.ListenAndServe(":8080", nil)

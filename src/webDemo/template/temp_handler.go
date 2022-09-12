@@ -1,7 +1,6 @@
-package http
+package template
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 )
@@ -12,19 +11,21 @@ import (
 //成最终的 HTML，并将该 HTML 传递给 responseWriter。
 
 func handler(writer http.ResponseWriter, request *http.Request) {
-	fmt.Fprint(writer, "执行 HTML 模板请求", request.URL.Path)
-
 	//解析模板文件
-	temp, _ := template.ParseFiles("template.html")
+	temp, _ := template.ParseFiles("template/template.html")
 	//执行模板，动态数据替换。且该方法只能作用于一个模板的情况下，如果有多个模板，则只会作用到第一个模板中
 	temp.Execute(writer, "hello template")
+	temp.Execute(writer, 10 > 9)
 
 	//该方法作用同上，但它是作用于指定 name 的模板产生的输出
-	temp, _ = template.ParseFiles("template.html", "temp.html")
-	temp.ExecuteTemplate(writer, "temp.html", "hello template2")
+	temp, _ = template.ParseFiles("template/template.html", "template/temp.html")
+	if temp == nil {
+		return
+	}
+	temp.ExecuteTemplate(writer, "template/temp.html", "hello template2")
 }
 
-func test() {
+func TempTest() {
 	http.HandleFunc("/temp", handler)
 	http.ListenAndServe(":8080", nil)
 }

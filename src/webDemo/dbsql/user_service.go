@@ -2,14 +2,6 @@ package dbsql
 
 import "fmt"
 
-// User 数据库实例结构体
-type User struct {
-	Id   int
-	Name string
-	Pass string
-	Age  int
-}
-
 func (user *User) Add() error {
 	sql := "insert into user(id,name,pass,age) values(?,?,?,?)"
 
@@ -42,7 +34,7 @@ func (user *User) Add2() error {
 }
 
 func (user *User) GetById() (*User, error) {
-	sql := "select * from user where id = ?"
+	sql := "select id, name, age from user where id = ?"
 	row := DB.QueryRow(sql, user.Id)
 
 	var id int
@@ -62,7 +54,7 @@ func (user *User) GetById() (*User, error) {
 }
 
 func (user *User) GetAll() ([]*User, error) {
-	sql := "select * from user"
+	sql := "select id, name, age from user"
 	rows, err := DB.Query(sql)
 	if err != nil {
 		return nil, err
@@ -91,4 +83,16 @@ func (user *User) GetAll() ([]*User, error) {
 		fmt.Printf("第%d个用户是：%v \n", k+1, v)
 	}
 	return users, nil
+}
+
+func GetByName(name string) (*User, error) {
+	sql := "select id, name, age from user where name = ?"
+	rows, err := DB.Query(sql, name)
+	if err != nil {
+		return nil, err
+	}
+
+	user := &User{}
+	rows.Scan(&user.Id, &user.Name, &user.Age)
+	return user, nil
 }

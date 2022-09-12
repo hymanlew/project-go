@@ -2,9 +2,16 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <title>测试 HTTP</title>
+    <title>测试 template</title>
 </head>
 <body>
-    后台传递的数据为：{{.}}
+    <h3>后台传递的数据为：{{.}}</h3>
+    <h3>
+        {{if .}}
+            条件为 true
+        {{else}}
+            条件为 false
+        {{end}}
+    </h3>
 </body>
 </html>

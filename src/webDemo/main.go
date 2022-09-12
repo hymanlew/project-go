@@ -1,8 +1,6 @@
 package main
 
-import (
-	"webDemo/zproject"
-)
+import "webDemo/template"
 
 func main() {
 	//自定义请求处理器，多路复用器
@@ -11,6 +9,9 @@ func main() {
 	//handler.Test3()
 	//handler.Test4()
 
+	//单体前端模板
+	template.TempTest()
+
 	//项目代码
-	zproject.DoMain()
+	//zproject.DoMain()
 }

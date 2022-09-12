@@ -3,6 +3,7 @@ package zproject
 import (
 	"net/http"
 	"text/template"
+	"webDemo/zproject/handlers"
 )
 
 func handler(writer http.ResponseWriter, request *http.Request) {
@@ -19,5 +20,9 @@ func DoMain() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("zproject/pages/static"))))
 	http.Handle("/view/", http.StripPrefix("/view/", http.FileServer(http.Dir("zproject/pages/view"))))
 	http.HandleFunc("/shop/index/", handler)
+
+	http.HandleFunc("/login", handlers.Login)
+	http.HandleFunc("/regist", handlers.Regist)
+
 	http.ListenAndServe(":8080", nil)
 }
