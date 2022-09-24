@@ -23,6 +23,8 @@ func DoMain() {
 
 	http.HandleFunc("/login", handlers.Login)
 	http.HandleFunc("/regist", handlers.Regist)
+	http.HandleFunc("/getShops", handlers.Shops)
+	http.HandleFunc("/logout", handlers.Logout)
 
 	http.ListenAndServe(":8080", nil)
 }

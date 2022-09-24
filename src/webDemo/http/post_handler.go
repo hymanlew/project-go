@@ -38,7 +38,7 @@ func handler(writer http.ResponseWriter, request *http.Request) {
 	fmt.Fprintf(writer, str)
 }
 
-func postHandler(writer http.ResponseWriter, request *http.Request) {
+func R302Handler(writer http.ResponseWriter, request *http.Request) {
 	//浏览器会自动解析 Content-Type: text/plain
 	writer.Write([]byte("返回字符串"))
 
@@ -89,6 +89,6 @@ func cookieGetHandler(writer http.ResponseWriter, request *http.Request) {
 
 func HttpTest() {
 	http.HandleFunc("/post", handler)
-	http.HandleFunc("/post2", postHandler)
+	http.HandleFunc("/post2", R302Handler)
 	http.ListenAndServe(":8080", nil)
 }
