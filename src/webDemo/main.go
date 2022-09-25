@@ -1,6 +1,6 @@
 package main
 
-import "webDemo/zproject"
+import "webDemo/rpc"
 
 func main() {
 	//自定义请求处理器，多路复用器
@@ -13,5 +13,8 @@ func main() {
 	//template.TempTest()
 
 	//项目代码
-	zproject.DoMain()
+	//zproject.DoMain()
+
+	//测试 proto 代码
+	rpc.TestProto()
 }

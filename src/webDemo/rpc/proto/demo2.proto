@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package webDemo.rpc.proto;
+
+import "google/protobuf/field_mask.proto";
+
+option java_package = "com.hyman.goDemo.rpc.proto";
+option java_multiple_files = true;
+option go_package = "hyman.com/goDemo/rpc/proto";
+
+message Permission {
+    int32 id = 1;
+    string name = 2;
+}
+
+message CreatePermissionRequest {
+    Permission permission = 1;
+}
+
+message UpdatePermissionRequest {
+    Permission permission = 1;
+}
+
+message DeletePermissionRequest {
+    int32 id = 1;
+}
+
+message GetPermissionRequest {
+    google.protobuf.FieldMask field_mask = 1;
+    int32 id = 2;
+}
+
+message ListPermissionRequest {
+    google.protobuf.FieldMask field_mask = 1;
+    int32 page_size = 2;
+    int32 page_number = 3;
+    int32 system_id = 4;
+    int32 tenant_id = 5;
+}
+
+message ListPermissionResponse {
+    repeated Permission permissions = 1;
+    int32 total_size = 2;
+}

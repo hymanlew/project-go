@@ -1,0 +1,30 @@
+syntax = "proto3"; //指定版本信息，不指定会报错，默认为 proto2
+
+//import 导入包时，不允许使用相对路径(../ 这种)，应该使用绝对路径(使用 --proto_path 或 -I 指定路径后面的路径)
+import "rpc/proto/demo2.proto";
+
+package webDemo.rpc.proto;
+
+
+option java_package = "com.hyman.goDemo.rpc.proto";
+option java_multiple_files = true;
+option go_package = "hyman.com/goDemo/rpc/proto";
+
+//message 用于定义一个消息类型，对应于 go 中的结构体
+message SystemPermission {
+  int32 system_id = 1;
+  double permission_id = 2;
+  string action_id = 3;
+
+  SystemView view = 4;
+
+  //数组，会在 go 中生成 int 类型的切片
+  repeated int32 ids = 5;
+
+}
+
+//enum 用于定义常量枚举，对应于 go 中的 const
+enum SystemView {
+  SYSTEM_VIEW_DEFAULT = 0;
+  SYSTEM_VIEW_WITH_PERMISSIONS = 1;
+}

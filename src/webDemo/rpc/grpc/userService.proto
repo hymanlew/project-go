@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package webDemo.rpc.grpc;
+
+//import 导入包时，不允许使用相对路径(../ 这种)，应该使用绝对路径(使用 --proto_path 或 -I 指定路径后面的路径)
+//并且不同 proto 文件之前相互引用时，必须明确指定是使用哪一个包(package)
+import "google/api/annotations.proto";
+import "google/api/http.proto";
+import "google/protobuf/field_mask.proto";
+import "rpc/proto/demo2.proto";
+
+option java_package = "com.hyman.goDemo.rpc.proto";
+option java_multiple_files = true;
+option go_package = "hyman.com/goDemo/rpc/proto/userService";
+
+message UserRequest {
+  int32 id = 1;
+  string name = 2;
+  int32 age = 3;
+}
+
+message ListUserResponse {
+  repeated UserRequest users = 1;
+  int32 total_size = 2;
+}
+
+message UpdateUserRequest {
+  UserRequest user = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+//定义 RPC 服务，生成接口，protoc-gen-go 插件集成了 grpc 插件
+service UserService{
+  rpc CreateSystem(UserRequest) returns (ListUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/systems"
+      body: "*"
+    };
+  }
+  rpc ListSystems(UserRequest) returns (ListUserResponse) {
+    option (google.api.http) = {
+      get: "/v1/systems"
+    };
+  }
+  rpc UpdateSystemPermissions(rpc.proto.UpdatePermissionRequest) returns (rpc.proto.Permission) {
+    option (google.api.http) = {
+      patch: "/v1/systems/{id}/permissions"
+      body: "*"
+    };
+  }
+  rpc DeleteSystemPermissions(rpc.proto.DeletePermissionRequest) returns (rpc.proto.Permission) {
+    option (google.api.http) = {
+      delete: "/v1/systems/{id}/permissions"
+      body: "*"
+    };
+  }
+  rpc VerifyPermission(rpc.proto.UpdatePermissionRequest) returns (rpc.proto.Permission) {
+    option (google.api.http) = {
+      patch: "/v1/permissions/{permission.id}"
+      body: "*"
+      additional_bindings: {
+        patch: "/v1/tenants/{permission.tenant_id}/permissions/{permission.id}"
+        body: "*"
+      }
+    };
+  }
+}
